@@ -14,13 +14,11 @@ class AuthAdapterFactory
 {
     public static function create(string $login): ?AuthAdapterInterface
     {
-        if (str_starts_with($login, 'FOO_')) {
-            return new FooAuthAdapter(new AuthWS());
-        } elseif (str_starts_with($login, 'BAR_')) {
-            return new BarAuthAdapter(new LoginService());
-        } elseif (str_starts_with($login, 'BAZ_')) {
-            return new BazAuthAdapter(new Authenticator());
-        }
-        return null;
+        return match (true) {
+            str_starts_with($login, 'FOO_') => new FooAuthAdapter(new AuthWS()),
+            str_starts_with($login, 'BAR_') => new BarAuthAdapter(new LoginService()),
+            str_starts_with($login, 'BAZ_') => new BazAuthAdapter(new Authenticator()),
+            default => null,
+        };
     }
 }

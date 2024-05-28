@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Movies\MovieAggregatorService;
+use App\Services\Movies\MovieAggregator;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
 
-    protected MovieAggregatorService $movieAggregatorService;
+    protected MovieAggregator $movieAggregator;
 
-    public function __construct(MovieAggregatorService $movieAggregatorService)
+    public function __construct(MovieAggregator $movieAggregator)
     {
-        $this->movieAggregatorService = $movieAggregatorService;
+        $this->movieAggregator = $movieAggregator;
     }
-    public function getTitles(Request $request): JsonResponse
+
+    public function getTitles(): JsonResponse
     {
         try {
-            $titles = $this->movieAggregatorService->getAggregatedTitles();
+            $titles = $this->movieAggregator->getAggregatedTitles();
             return response()->json($titles);
         } catch (\Exception $e) {
             return response()->json(['status' => 'failure']);

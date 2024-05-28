@@ -14,6 +14,9 @@ class BazMovieAdapter implements MovieAdapterInterface
         $this->movieService = $movieService;
     }
 
+    /**
+     * @throws ServiceUnavailableException
+     */
     public function getTitles(): array
     {
         try {

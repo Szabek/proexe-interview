@@ -2,10 +2,11 @@
 
 namespace App\Services\Movies;
 
-
-use Illuminate\Support\Facades\Cache;
+use Exception;
 use External\Foo\Exceptions\ServiceUnavailableException;
-class MovieAggregatorService
+use Illuminate\Support\Facades\Cache;
+
+class MovieAggregator
 {
     protected FooMovieAdapter $fooAdapter;
     protected BarMovieAdapter $barAdapter;
@@ -15,7 +16,8 @@ class MovieAggregatorService
         FooMovieAdapter $fooAdapter,
         BarMovieAdapter $barAdapter,
         BazMovieAdapter $bazAdapter
-    ) {
+    )
+    {
         $this->fooAdapter = $fooAdapter;
         $this->barAdapter = $barAdapter;
         $this->bazAdapter = $bazAdapter;
@@ -32,6 +34,10 @@ class MovieAggregatorService
         });
     }
 
+    /**
+     * @throws ServiceUnavailableException
+     * @throws Exception
+     */
     private function retry(callable $callback, $attempts = 3, $delay = 100)
     {
         for ($i = 0; $i < $attempts; $i++) {
@@ -44,6 +50,6 @@ class MovieAggregatorService
                 usleep($delay * 1000);
             }
         }
-        throw new \Exception('Service is unavailable after multiple attempts.');
+        throw new Exception('Service is unavailable after multiple attempts.');
     }
 }
