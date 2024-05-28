@@ -4,16 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\NoAuthAdapterFoundException;
 use App\Factories\AuthAdapterFactory;
+use App\Http\Requests\LoginRequest;
 use Firebase\JWT\JWT;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AuthController extends Controller
 {
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $login = $request->input('login');
-        $password = $request->input('password');
+        $validated = $request->validated();
+
+        $login = $validated['login'];
+        $password = $validated['password'];
 
         try {
             $adapter = AuthAdapterFactory::create($login);
@@ -38,7 +40,7 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'failure',
-        ]);
+        ], 400);
     }
 
     private function generateJwtToken(string $login, string $system): string
