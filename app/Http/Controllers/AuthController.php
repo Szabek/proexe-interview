@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NoAuthAdapterFoundException;
 use App\Factories\AuthAdapterFactory;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
@@ -14,7 +15,14 @@ class AuthController extends Controller
         $login = $request->input('login');
         $password = $request->input('password');
 
-        $adapter = AuthAdapterFactory::create($login);
+        try {
+            $adapter = AuthAdapterFactory::create($login);
+        } catch (NoAuthAdapterFoundException $e) {
+            return response()->json([
+                'status' => 'failure',
+                'message' => $e->getMessage(),
+            ], 400);
+        }
 
         if ($adapter && $adapter->authenticate($login, $password)) {
 

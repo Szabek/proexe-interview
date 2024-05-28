@@ -21,7 +21,10 @@ class MovieController extends Controller
             $titles = $this->movieAggregator->getAggregatedTitles();
             return response()->json($titles);
         } catch (\Exception $e) {
-            return response()->json(['status' => 'failure']);
+            return response()->json([
+                'status' => 'failure',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 }
