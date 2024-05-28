@@ -23,4 +23,9 @@ class FooAuthAdapter implements AuthAdapterInterface
             return false;
         }
     }
+
+    public function getSystem(): string
+    {
+        return 'FOO';
+    }
 }

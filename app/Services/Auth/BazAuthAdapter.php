@@ -19,4 +19,9 @@ class BazAuthAdapter implements AuthAdapterInterface
         $response = $this->authenticator->auth($login, $password);
         return $response instanceof Success;
     }
+
+    public function getSystem(): string
+    {
+        return 'BAZ';
+    }
 }

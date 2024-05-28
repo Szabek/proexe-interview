@@ -17,4 +17,9 @@ class BarAuthAdapter implements AuthAdapterInterface
     {
         return $this->loginService->login($login, $password);
     }
+
+    public function getSystem(): string
+    {
+        return 'BAR';
+    }
 }

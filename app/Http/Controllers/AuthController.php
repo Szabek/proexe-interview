@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Factories\AuthAdapterFactory;
+use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -9,10 +11,37 @@ class AuthController extends Controller
 {
     public function login(Request $request): JsonResponse
     {
-        // TODO
+        $login = $request->input('login');
+        $password = $request->input('password');
+
+        $adapter = AuthAdapterFactory::create($login);
+
+        if ($adapter && $adapter->authenticate($login, $password)) {
+
+            $system = $adapter->getSystem();
+
+            $token = $this->generateJwtToken($login, $system);
+
+            return response()->json([
+                'status' => 'success',
+                'token' => $token,
+            ]);
+        }
 
         return response()->json([
             'status' => 'failure',
         ]);
+    }
+
+    private function generateJwtToken(string $login, string $system): string
+    {
+        $payload = [
+            'login' => $login,
+            'context' => $system,
+            'iat' => now()->timestamp,
+            'exp' => now()->addMinutes(config('sanctum.expiration', 60))->timestamp,
+        ];
+
+        return JWT::encode($payload, env('JWT_SECRET'), 'HS256');
     }
 }
